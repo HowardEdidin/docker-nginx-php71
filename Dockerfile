@@ -79,11 +79,18 @@ RUN apt update && apt dist-upgrade -y && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /var/lib/log/* /tmp/* /var/tmp/*
 
+RUN apt-get install -y --no-install-recommends certbot -t jessie-backports
+
 # PHP
 ADD ./php/php-fpm.conf /etc/php/7.1/
 
+#SSL
+ADD ./scripts/ssl.sh 		  		/opt/ssl.sh
+ADD ./config/certbot/certbot.cron 	/etc/cron.d/certbot
+ADD ./config/certbot/cli.ini 		/etc/letsencrypt/cli.ini
+
 # NGINX
-ADD ./nginx/nginx.conf    /etc/nginx/nginx.conf
+ADD ./nginx/nginx.conf    	  /etc/nginx/nginx.conf
 ADD ./nginx/mime.types    	  /etc/nginx/mime.types
 ADD ./nginx/conf.d        	  /etc/nginx/conf.d
 ADD ./nginx/site.conf.d   	  /etc/nginx/site.conf.d
@@ -91,10 +98,6 @@ ADD ./nginx/sites.d       	  /etc/nginx/sites.d
 
 RUN apt-get install openssl
 RUN openssl dhparam -out /etc/nginx/dhparam2048.pem 2048
-RUN mkdir -p /etc/nginx/ssl/private
-RUN mkdir -p /etc/nginx/ssl/certs
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/private/nginx-selfsigned.key -out /etc/nginx/ssl/certs/nginx-selfsigned.crt \
-    -subj "/C=LC/ST=Local/L=Local/O=Local/OU=LC/CN=local.local"
 
 #ADD ./dhparam/dhparam2048.pem /etc/nginx/dhparam2048.pem
 #ADD ./dhparam/dhparam4096.pem /etc/nginx/dhparam4096.pem
