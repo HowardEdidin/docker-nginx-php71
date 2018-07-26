@@ -21,10 +21,10 @@ server {
     add_header Strict-Transport-Security 'max-age=15552000; includeSubDomains; preload' always;
     add_header X-Frame-Options SAMEORIGIN;
 
-	ssl_certificate      /etc/nginx/ssl/ssl-cert.pem;
-	ssl_certificate_key  /etc/nginx/ssl/ssl-cert-pkey.pem;
-	ssl_verify_client optional;
-	ssl_client_certificate /etc/nginx/ssl/ssl-client-ca-cert.pem;
+    ssl_certificate      /etc/nginx/ssl/ssl-cert.pem;
+    ssl_certificate_key  /etc/nginx/ssl/ssl-cert-pkey.pem;
+    ssl_verify_client optional;
+    ssl_client_certificate /etc/nginx/ssl/ssl-client-ca-cert.pem;
 
     ssl_session_timeout   5m;
 
