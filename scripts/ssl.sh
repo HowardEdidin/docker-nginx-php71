@@ -7,12 +7,12 @@ if [ -z "$SSL_IGNORE_CA_CERT" ]; then
     fi
 	# create client ssl cert file, ensure config is not commented
 	echo $SSL_CLIENT_CA_CERT |  sed 's/\\n/\n/g' > /etc/nginx/ssl/ssl-client-ca-cert.pem
-	sed -i 's/#*ssl_verify_client/ssl_verify_client/' /etc/nginx/conf.d/default.conf
-	sed -i 's/#*ssl_client_certificate/ssl_client_certificate/' /etc/nginx/conf.d/default.conf
+	sed -i 's/#*ssl_verify_client/ssl_verify_client/' /etc/nginx/sites.d/site
+	sed -i 's/#*ssl_client_certificate/ssl_client_certificate/' /etc/nginx/sites.d/site
 else
 	# comment out client ssl parts
-	sed -i 's/#*ssl_verify_client/#ssl_verify_client/' /etc/nginx/conf.d/default.conf
-	sed -i 's/#*ssl_client_certificate/#ssl_client_certificate/' /etc/nginx/conf.d/default.conf
+	sed -i 's/#*ssl_verify_client/#ssl_verify_client/' /etc/nginx/sites.d/site
+	sed -i 's/#*ssl_client_certificate/#ssl_client_certificate/' /etc/nginx/sites.d/site
 fi
 
 if [ -z "$SSL_DH" ]; then
@@ -34,13 +34,13 @@ if [ -z "$SSL_USE_LETSENCRYPT" ]; then
     fi
 
     # enable ssl
-    sed -i 's/#*ssl_certificate/ssl_certificate/' /etc/nginx/conf.d/default.conf
-    sed -i 's/listen 443; #ssl/listen 443 ssl/' /etc/nginx/conf.d/default.conf
+    sed -i 's/#*ssl_certificate/ssl_certificate/' /etc/nginx/sites.d/site
+    sed -i 's/listen 443; #ssl/listen 443 ssl/' /etc/nginx/sites.d/site
 
     echo $SSL_CERT | sed 's/\\n/\n/g' > /etc/nginx/ssl/ssl-cert.pem
     echo $SSL_KEY  | sed 's/\\n/\n/g' > /etc/nginx/ssl/ssl-cert-pkey.pem
-    sed -i 's/ssl_certificate\s[^;]*;/ssl_certificate      \/etc\/nginx\/ssl\/ssl-cert.pem;/' /etc/nginx/conf.d/default.conf
-    sed -i 's/ssl_certificate_key\s[^;]*;/ssl_certificate_key  \/etc\/nginx\/ssl\/ssl-cert-pkey.pem;/' /etc/nginx/conf.d/default.conf
+    sed -i 's/ssl_certificate\s[^;]*;/ssl_certificate      \/etc\/nginx\/ssl\/ssl-cert.pem;/' /etc/nginx/sites.d/site
+    sed -i 's/ssl_certificate_key\s[^;]*;/ssl_certificate_key  \/etc\/nginx\/ssl\/ssl-cert-pkey.pem;/' /etc/nginx/sites.d/site
 else
     # use let's encrypt for certificates
     if [ -z "$LE_EMAIL" ]; then
@@ -60,20 +60,20 @@ else
 
     if [ ! -d "/data/letsencrypt/$LE_DOMAIN" ]; then
         # no certificates yet, disable SSL for now
-        sed -i 's/#*ssl_certificate/#ssl_certificate/' /etc/nginx/conf.d/default.conf
-        sed -i 's/listen 443 ssl/listen 443; #ssl/' /etc/nginx/conf.d/default.conf
+        sed -i 's/#*ssl_certificate/#ssl_certificate/' /etc/nginx/sites.d/site
+        sed -i 's/listen 443 ssl/listen 443; #ssl/' /etc/nginx/sites.d/site
         /usr/sbin/nginx -s reload
 
         # request cert
         certbot certonly -n -q
 
         # enable ssl
-        sed -i 's/#*ssl_certificate/ssl_certificate/' /etc/nginx/conf.d/default.conf
-        sed -i 's/listen 443; #ssl/listen 443 ssl/' /etc/nginx/conf.d/default.conf
+        sed -i 's/#*ssl_certificate/ssl_certificate/' /etc/nginx/sites.d/site
+        sed -i 's/listen 443; #ssl/listen 443 ssl/' /etc/nginx/sites.d/site
     fi
 
-    sed -i "s/ssl_certificate\s[^;]*;/ssl_certificate     \/data\/letsencrypt\/live\/$LE_DOMAIN\/fullchain.pem;/" /etc/nginx/conf.d/default.conf
-    sed -i "s/ssl_certificate_key\s[^;]*;/ssl_certificate_key \/data\/letsencrypt\/live\/$LE_DOMAIN\/privkey.pem;/" /etc/nginx/conf.d/default.conf
+    sed -i "s/ssl_certificate\s[^;]*;/ssl_certificate     \/data\/letsencrypt\/live\/$LE_DOMAIN\/fullchain.pem;/" /etc/nginx/sites.d/site
+    sed -i "s/ssl_certificate_key\s[^;]*;/ssl_certificate_key \/data\/letsencrypt\/live\/$LE_DOMAIN\/privkey.pem;/" /etc/nginx/sites.d/site
 
 fi
 
