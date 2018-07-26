@@ -112,6 +112,8 @@ ADD ./supervisor/supervisord.conf /etc/
 ADD ./supervisor/services /etc/supervisord.d/
 
 RUN mkdir -p /etc/nginx/ssl
+RUN chown -R root:root /etc/nginx/ssl
+RUN chmod -R 775 /etc/nginx/ssl
 
 # APPLICATION
 WORKDIR /srv
