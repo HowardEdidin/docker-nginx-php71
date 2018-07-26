@@ -111,6 +111,8 @@ ADD ./www /srv/www/
 ADD ./supervisor/supervisord.conf /etc/
 ADD ./supervisor/services /etc/supervisord.d/
 
+RUN mkdir -p /etc/nginx/ssl
+
 # APPLICATION
 WORKDIR /srv
 
