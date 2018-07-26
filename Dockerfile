@@ -1,6 +1,6 @@
 FROM dockette/jessie
 
-MAINTAINER Milan Sulc <sulcmil@gmail.com>
+MAINTAINER Michal Hlavka <michal.hlavka@gmail.com>
 
 # PHP
 ENV PHP_MODS_DIR=/etc/php/7.1/mods-available
@@ -24,6 +24,7 @@ RUN apt update && apt dist-upgrade -y && \
     apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 && \
     echo "deb http://nginx.org/packages/debian/ jessie nginx" > /etc/apt/sources.list.d/nginx.list && \
     echo "deb-src http://nginx.org/packages/debian/ jessie nginx" >> /etc/apt/sources.list.d/nginx.list && \
+    echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list && \
     apt update && \
     apt install -y --no-install-recommends \
         nginx \
@@ -63,6 +64,7 @@ RUN apt update && apt dist-upgrade -y && \
         php7.1-zip \
         php7.1-xmlrpc \
         php7.1-xsl && \
+        apt-get install -y --no-install-recommends certbot -t jessie-backports && \
     # COMPOSER #################################################################
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     composer global require "hirak/prestissimo:^0.3" && \
@@ -73,13 +75,13 @@ RUN apt update && apt dist-upgrade -y && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
     # CLEAN UP #################################################################
     rm /etc/nginx/conf.d/default.conf && \
+    apt-get install openssl && \
     apt-get clean -y && \
     apt-get autoclean -y && \
     apt-get remove -y wget curl && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /var/lib/log/* /tmp/* /var/tmp/*
 
-RUN apt-get install -y --no-install-recommends certbot -t jessie-backports
 
 # PHP
 ADD ./php/php-fpm.conf /etc/php/7.1/
@@ -96,7 +98,7 @@ ADD ./nginx/conf.d        	  /etc/nginx/conf.d
 ADD ./nginx/site.conf.d   	  /etc/nginx/site.conf.d
 ADD ./nginx/sites.d       	  /etc/nginx/sites.d
 
-RUN apt-get install openssl
+#
 RUN openssl dhparam -out /etc/nginx/dhparam2048.pem 2048
 
 #ADD ./dhparam/dhparam2048.pem /etc/nginx/dhparam2048.pem
