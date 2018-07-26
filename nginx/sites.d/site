@@ -48,11 +48,10 @@ server {
       fastcgi_param  SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
       fastcgi_param  DOCUMENT_ROOT $realpath_root;
 
-	  fastcgi_buffers 256 4k;
+      fastcgi_buffers 256 4k;
       fastcgi_intercept_errors on;
 
       fastcgi_read_timeout 14400;
-	  fastcgi_index index.php;
 
       try_files $uri =404;
     }
