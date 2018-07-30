@@ -1,7 +1,7 @@
 ##
 # Virtual Host Configs
 ##
-upstream website {
+upstream _ {
     server unix:/var/run/php71-fpm.sock;
 }
 
@@ -39,7 +39,7 @@ server {
     location ~* \.php$ {
       fastcgi_split_path_info ^(.+?\.php)(/.*)$;
 
-      fastcgi_pass   website;
+      fastcgi_pass   _;
       fastcgi_index  index.php;
       include        fastcgi_params;
 
